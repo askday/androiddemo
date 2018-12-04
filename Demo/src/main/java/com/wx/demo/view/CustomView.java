@@ -1,22 +1,27 @@
 package com.wx.demo.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.wx.demo.util.LogUtil;
+import com.wx.demo.R;
+import com.wx.demo.model.GridItem;
+
+import java.util.List;
 
 public class CustomView extends ViewGroup {
+    int index = 0;
     int columnCount = 13;
     int width = 30;
-    TextView tv;
+    GridItem item;
+    TextView titleTV, bbTV, cellTV, foldTV, unassignedTV;
 
     public CustomView(Context context) {
         super(context);
@@ -32,14 +37,12 @@ public class CustomView extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        LogUtil.d(String.format("changed:%b\tl:%d\tt:%d\tr:%d\tb:%d", changed, l, t, r, b));
+//        LogUtil.d(String.format("changed:%b\tl:%d\tt:%d\tr:%d\tb:%d", changed, l, t, r, b));
         if (changed) {
             int count = getChildCount();
             for (int i = 0; i < count; i++) {
                 View child = getChildAt(i);
-                int height = child.getMeasuredHeight();
-                int width = child.getMeasuredWidth();
-                child.layout(0, 0, width, height);
+                child.layout(3, 3, this.width - 3, this.width - 3);
             }
         }
     }
@@ -69,13 +72,12 @@ public class CustomView extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        LogUtil.d("======onMeasure====");
+//        LogUtil.d("======onMeasure====");
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         this.width = getMySize(widthMeasureSpec) / this.columnCount;
         setMeasuredDimension(this.width, this.width);
         final int count = getChildCount();
         for (int i = 0; i < count; i++) {
-            //这个很重要，没有就不显示
             getChildAt(i).measure(getMeasuredWidth(), getMeasuredHeight());
         }
     }
@@ -90,16 +92,58 @@ public class CustomView extends ViewGroup {
         canvas.drawRect(0, 0, this.width, this.width, paint);
 
         // 绘制底色
-        paint.setColor(Color.GREEN);
-        canvas.drawRect(1, 1, this.width - 2, this.width-2, paint);
+        paint.setColor(Color.GRAY);
+        canvas.drawRect(1, 1, this.width - 2, this.width - 2, paint);
+
+        if (item != null) {
+            double unassigned = item.getUnassigned();
+            if (unassigned > 0.99) {
+
+            } else {
+                paint.setColor(Color.rgb(212, 148, 123));
+                float startX = 1;
+                float endX = (float) ((this.width - 2) * item.getBb());
+                canvas.drawRect(startX, 1, endX, this.width - 2, paint);
+
+                endX = startX + (float) ((this.width - 2) * item.getCell());
+                paint.setColor(Color.rgb(156, 186, 138));
+                canvas.drawRect(startX, 1, endX, this.width - 2, paint);
+                startX += endX;
+
+                paint.setColor(Color.rgb(126, 160, 190));
+                canvas.drawRect(startX, 1, this.width - 2, this.width - 2, paint);
+            }
+        }
     }
 
-    @SuppressLint("ResourceAsColor")
     public void init(int index, int columCount) {
-        setBackgroundColor(Color.RED);
+        setWillNotDraw(false);
 
-        this.tv = new TextView(getContext());
-        tv.setText(String.valueOf(index));
-        addView(tv, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        this.index = index;
+        this.columnCount = columCount;
+        final LayoutInflater inflater = LayoutInflater.from(getContext());
+        final View view = inflater.inflate(R.layout.layout_grid_item, this);
+        titleTV = (TextView) view.findViewById(R.id.grid_title);
+        bbTV = (TextView) view.findViewById(R.id.grid_title_1_v);
+        cellTV = (TextView) view.findViewById(R.id.grid_title_2_v);
+        foldTV = (TextView) view.findViewById(R.id.grid_title_3_v);
+        unassignedTV = (TextView) view.findViewById(R.id.grid_title_4_v);
+//        addView(view, this.width, this.width);
+    }
+
+    public void updateData(List<GridItem> info, int index) {
+        try {
+            item = info.get(index);
+            this.invalidate();
+
+            titleTV.setText(item.getName());
+            bbTV.setText(String.format("%.2f%%", item.getBb() * 100));
+            cellTV.setText(String.format("%.2f%%", item.getCell() * 100));
+            foldTV.setText(String.format("%.2f%%", item.getFold() * 100));
+            unassignedTV.setText(String.format("%.2f%%", item.getUnassigned() * 100));
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
