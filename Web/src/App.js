@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import Axios from 'axios';
 import './App.css';
 
 class App extends Component {
   constructor(props) {
     super(props);
-    const row = 2;
-    const colum = 2;
+    const row = 13;
+    const colum = 13;
     const data = [];
     for (let i = 0; i < row; i++) {
       const subData = [];
@@ -37,35 +36,19 @@ class App extends Component {
   onSubmit = (e) => {
     e.preventDefault();
     console.log(JSON.stringify(this.data));
-    // fetch("http://localhost:3005/list ", {
-    //   crossDomain: true,
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Access-Control-Allow-Origin': '*',
-    //   },
-    //   body: JSON.stringify(this.data)
-    // }).then(response => {
-    //   console.log(response);
-    //   response.json();
-    // }).then(data => {
-    //   console.log(data);
-    // }).catch(error => {
-    //   console.log(error)
-    // });
-
-    // Axios.get(
-    //   "http://localhost:3005/submit",
-    //   {
-    //     headers: {
-    //       'Access-Control-Allow-Origin': '*',
-    //     }
-    //   }
-    // ).then((res) => {
-    //   console.log(res)
-    // }, (err) => {
-    //   console.log(err);
-    // })
+    fetch("submit ", {
+      method: 'POST',
+      // headers: {
+      //   'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+      // },
+      body: JSON.stringify(this.data)
+    }).then(response => {
+      return response.json();
+    }).then(data => {
+      console.log(data);
+    }).catch(error => {
+      console.log(error)
+    });
   }
 
   render() {
