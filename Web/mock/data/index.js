@@ -43,5 +43,15 @@ module.exports = {
         data,
       };
     }
+  },
+  'submit': {
+    response: (req) => {
+      const reqParams = req.body || {};
+      console.log(reqParams);
+      return {
+        retcode: 200,
+        retdesc: 'success',
+      };
+    }
   }
 };

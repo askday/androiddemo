@@ -5,5 +5,5 @@ module.exports = {
   // base: 'app',
   // 服务端口，配合webpack的代理使用
   port: 3005,
-  dataDir: 'data/',
+  dataDir: 'mock/data/',
 };
