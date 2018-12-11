@@ -5,7 +5,7 @@ import java.util.List;
 
 public class DataDetail {
     String name = "";
-    List<GridItem> info = new ArrayList<>();
+    int category = 0;
     List<DataDetail> children = new ArrayList<>();
 
     public String getName() {
@@ -16,12 +16,12 @@ public class DataDetail {
         this.name = name;
     }
 
-    public List<GridItem> getInfo() {
-        return info;
+    public int getCategory() {
+        return category;
     }
 
-    public void setInfo(List<GridItem> info) {
-        this.info = info;
+    public void setCategory(int category) {
+        this.category = category;
     }
 
     public List<DataDetail> getChildren() {

@@ -8,12 +8,7 @@ import android.support.v7.widget.GridLayout;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -21,8 +16,11 @@ import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 import com.wx.demo.R;
 import com.wx.demo.model.DataDetail;
+import com.wx.demo.util.CacheUtil;
 import com.wx.demo.util.LogUtil;
 import com.wx.demo.util.PreferenceUtils;
+import com.wx.demo.util.ToolUtil;
+import com.wx.demo.util.VolleyUtil;
 import com.wx.demo.view.CustomView;
 import com.wx.demo.view.IconTreeItemHolder;
 import com.wx.demo.view.SelectableHeaderHolder;
@@ -38,8 +36,6 @@ public class MainActivity extends Activity implements TreeNode.TreeNodeClickList
     AndroidTreeView tView;
     GridLayout gridLayout;
     TreeNode root;
-
-    RequestQueue mQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,15 +62,12 @@ public class MainActivity extends Activity implements TreeNode.TreeNodeClickList
                 gridLayout.addView(customView);
             }
         }
-
-        mQueue = Volley.newRequestQueue(this);
-
-        requestData();
-
+        // 初始化缓存
         PreferenceUtils.getInstance().init(this, "db");
-//        PreferenceUtils.getInstance().saveObject("test", 1);
-//        int test = PreferenceUtils.getInstance().getInt("test");
-//        LogUtil.d(String.valueOf(test));
+        // 初始化网络
+        VolleyUtil.getInstance().init(this);
+        // 初始化
+        getTreeData();
     }
 
     @Override
@@ -102,6 +95,23 @@ public class MainActivity extends Activity implements TreeNode.TreeNodeClickList
             gridLayout.requestLayout();
         }
     }
+
+    @Override
+    public void onClick(TreeNode node, Object value) {
+        try {
+            IconTreeItemHolder.IconTreeItem data = (IconTreeItemHolder.IconTreeItem) value;
+            //Toast.makeText(this, data.detail.getName(), Toast.LENGTH_SHORT).show();
+            // 更新gridlayout里的网格数据,紧在最终的子节点更新数据
+            if (data != null && data.detail != null && data.detail.getChildren().size() == 0) {
+                updateGridData(data.detail.getCategory());
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /****************************以下是自定义函数********************************/
 
     private void clearRootNode() {
         if (root != null) {
@@ -148,7 +158,6 @@ public class MainActivity extends Activity implements TreeNode.TreeNodeClickList
             if (list.size() > 0) {
                 clearRootNode();
                 addRootNode(list);
-                updateGrid(list.get(0));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -156,52 +165,75 @@ public class MainActivity extends Activity implements TreeNode.TreeNodeClickList
 
     }
 
-    private void requestData() {
-        String url = "http://10.236.181.33:3005/list";
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                updateViews(response);
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                try {
-                                    String responseBody = new String(error.networkResponse.data, "utf-8");
-                                    JSONObject jsonObject = new JSONObject(responseBody);
-                                    updateViews(jsonObject);
-                                } catch (Exception e) {
-                                    //Handle a malformed json response
-                                    Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-
-        mQueue.add(jsonObjectRequest);
-    }
-
-    @Override
-    public void onClick(TreeNode node, Object value) {
+    /**
+     * 24小时才更新一次数据
+     * 否则如果本地有缓存使用缓存数据
+     */
+    private void getTreeData() {
         try {
-            IconTreeItemHolder.IconTreeItem data = (IconTreeItemHolder.IconTreeItem) value;
-//            Toast.makeText(this, data.detail.getName(), Toast.LENGTH_SHORT).show();
-            // 更新gridlayout里的网格数据
-            updateGrid(data.detail);
+            long current = System.currentTimeMillis();
+            long cacheRequestTreeTime = PreferenceUtils.getInstance().getLong(CacheUtil.kLastRequestTreeTime, current);
+
+            boolean isSameDay = ToolUtil.isSameDay(cacheRequestTreeTime, current);
+            if (isSameDay) {
+                requestTreeData();
+            } else {
+                String cacheTreeData = PreferenceUtils.getInstance().getString(CacheUtil.kTreeData);
+                if (cacheTreeData != null || cacheTreeData.length() > 0) {
+                    JSONObject jsonObject = new JSONObject(cacheTreeData);
+                    updateViews(jsonObject);
+                } else {
+                    requestTreeData();
+                }
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private void updateGrid(DataDetail data) {
+    private void requestTreeData() {
+        LogUtil.d("=======do list request======");
+        VolleyUtil.getInstance().loadData("list", new VolleyUtil.Listener<Object>() {
+            @Override
+            public void onSuccess(Object resObj) {
+                LogUtil.d("=======request success======");
+                JSONObject jsonObject = (JSONObject) resObj;
+                long current = System.currentTimeMillis();
+                PreferenceUtils.getInstance().save(CacheUtil.kLastRequestTreeTime, current);
+                PreferenceUtils.getInstance().save(CacheUtil.kTreeData, jsonObject.toString());
+                updateViews(jsonObject);
+            }
+
+            @Override
+            public void onError(Object errObj) {
+                LogUtil.d("=======request error======");
+                VolleyError error = (VolleyError) errObj;
+                try {
+                    String responseBody = new String(error.networkResponse.data, "utf-8");
+                    JSONObject jsonObject = new JSONObject(responseBody);
+                    updateViews(jsonObject);
+                } catch (Exception e) {
+                    //Handle a malformed json response
+                    Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    /**
+     * 点击树的叶子结点，显示右侧的grid信息
+     * 如果本地有缓存就用缓存，否则进行网络请求
+     */
+    private void updateGridData(int category) {
+        LogUtil.d("==========updateGridData==========");
+        // 
+
         if (gridLayout != null) {
             for (int i = 0; i < gridLayout.getChildCount(); i++) {
                 CustomView customView = (CustomView) gridLayout.getChildAt(i);
-                customView.updateData(data.getInfo(), i);
+//                customView.updateData(data, i);
             }
         }
     }
+
 }

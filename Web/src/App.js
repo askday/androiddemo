@@ -36,7 +36,7 @@ class App extends Component {
   onSubmit = (e) => {
     e.preventDefault();
     console.log(JSON.stringify(this.data));
-    fetch("submit ", {
+    fetch("http://localhost:3005/submit ", {
       method: 'POST',
       // headers: {
       //   'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'

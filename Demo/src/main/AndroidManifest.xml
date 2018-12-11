@@ -13,14 +13,18 @@
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="sensor">
+            android:screenOrientation="sensorLandscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.DetailActivity" />
+        <activity android:name=".activity.DetailActivity" >
+            <intent-filter>
+                <category android:name = "android.intent.category.DEFAULT" />
+                <action android:name="com.test.wx"/>
+            </intent-filter>
+        </activity>
     </application>
 </manifest>

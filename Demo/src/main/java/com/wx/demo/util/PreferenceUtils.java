@@ -198,9 +198,9 @@ public class PreferenceUtils {
         }
     }
 
-    public long getLong(String key, int defaultValue) {
+    public long getLong(String key, long defaultValue) {
         checkPrefs();
-        return prefs != null ? prefs.getLong(key, (long) defaultValue) : (long) defaultValue;
+        return prefs != null ? prefs.getLong(key, defaultValue) : defaultValue;
     }
 
     public void delete(String key) {
