@@ -3,3 +3,6 @@ build/
 .idea
 Mock/node_modules
 *.lock
+bin
+.project
+settings.json

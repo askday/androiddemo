@@ -18,7 +18,7 @@ public class VolleyUtil {
         return ourInstance;
     }
 
-    private static final String baseUrl = "http://10.236.189.157:3005/";
+    private static final String baseUrl = "http://192.168.1.40:3005/";
     RequestQueue mQueue;
 
 
@@ -35,6 +35,26 @@ public class VolleyUtil {
         LogUtil.d("=======do list request======");
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                listener.onSuccess(response);
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                listener.onError(error);
+                            }
+                        });
+        mQueue.add(jsonObjectRequest);
+    }
+
+    public void loadData(String path, JSONObject params, final Listener listener) {
+        String url = baseUrl + path;
+        LogUtil.d("=======do list request======");
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.POST, url, params,
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
