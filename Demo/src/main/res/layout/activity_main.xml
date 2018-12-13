@@ -1,38 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:jp="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <RelativeLayout
-        android:layout_weight="2"
-        android:layout_width="0dp"
-        android:layout_height="match_parent" >
-        <Button
-            android:id="@+id/btn_refresh_tree"
-            android:text="刷新"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <RelativeLayout
-            android:id="@+id/tree_container"
-            android:layout_below="@id/btn_refresh_tree"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-        </RelativeLayout>
-    </RelativeLayout>
-
-    <ScrollView
-        android:layout_width="0dp"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="8">
+        android:layout_marginBottom="48dp">
 
-        <android.support.v7.widget.GridLayout
-            android:id="@+id/gridLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    </android.support.v4.view.ViewPager>
 
-        </android.support.v7.widget.GridLayout>
-    </ScrollView>
-
-</LinearLayout>
+    <com.jpeng.jptabbar.JPTabBar
+        android:id="@+id/tabbar"
+        jp:TabAnimate="Scale"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/tab_bg"
+        android:layout_alignParentBottom="true"/>
+</RelativeLayout>

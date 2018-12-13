@@ -52,6 +52,56 @@ module.exports = {
       };
     }
   },
+  'desk': {
+    response: (req) => {
+      const reqParams = req.body || {};
+      console.log(reqParams);
+      const list = [];
+      const count = Math.random() * 5;
+      for (let i = 0; i < count; i++) {
+        list.push({
+          no: i,
+          name: '@word(5,9)',
+          money: 100.00,
+        });
+      }
+      return {
+        retcode: 200,
+        retdesc: 'success',
+        data: {
+          'deskNo|1-100': 10,
+          list,
+        }
+      };
+    }
+  },
+  'desklist': {
+    response: (req) => {
+      const reqParams = req.body || {};
+      console.log(reqParams);
+      const data = [];
+      for (let m = 0; m < 5; m++) {
+        const list = [];
+        const count = Math.random() * 5;
+        for (let i = 0; i < count; i++) {
+          list.push({
+            no: i,
+            name: '@word(5,9)',
+            money: 100.00,
+          });
+        }
+        data.push({
+          'deskNo|1-100': 10,
+          list,
+        });
+      }
+      return {
+        retcode: 200,
+        retdesc: 'success',
+        data,
+      };
+    }
+  },
   'submit': {
     response: (req) => {
       const reqParams = req.body || {};

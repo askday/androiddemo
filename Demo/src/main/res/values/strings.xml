@@ -6,4 +6,6 @@
     <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
     <string name="ic_keyboard_arrow_down">&#xe0c5;</string>
     <string name="ic_email">&#xe087;</string>
+    <string name="first_tab">首页</string>
+    <string name="sec_tab">牌桌</string>
 </resources>
