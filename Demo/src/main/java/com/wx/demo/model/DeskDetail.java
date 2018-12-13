@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeskDetail {
-    int destkNo = 0;
+    int deskNo = 0;
     List<DeskUser> list = new ArrayList<>();
 
-    public int getDestkNo() {
-        return destkNo;
+    public int getDeskNo() {
+        return deskNo;
     }
 
-    public void setDestkNo(int destkNo) {
-        this.destkNo = destkNo;
+    public void setDeskNo(int deskNo) {
+        this.deskNo = deskNo;
     }
 
     public List<DeskUser> getList() {

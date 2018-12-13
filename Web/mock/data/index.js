@@ -80,7 +80,7 @@ module.exports = {
       const reqParams = req.body || {};
       console.log(reqParams);
       const data = [];
-      for (let m = 0; m < 5; m++) {
+      for (let m = 0; m < 50; m++) {
         const list = [];
         const count = Math.random() * 5;
         for (let i = 0; i < count; i++) {

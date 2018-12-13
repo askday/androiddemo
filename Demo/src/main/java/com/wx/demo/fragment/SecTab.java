@@ -277,7 +277,7 @@ public class SecTab extends Fragment implements View.OnClickListener {
                     LayoutInflater inflater = LayoutInflater.from(getContext());
                     RelativeLayout relativeLayout = (RelativeLayout) inflater.inflate(R.layout.layout_dest_list, null);
                     TextView tv = (TextView) relativeLayout.findViewById(R.id.list_item_name);
-                    tv.setText(String.valueOf(list.get(position).getDestkNo()));
+                    tv.setText(String.valueOf(list.get(position).getDeskNo()));
                     return relativeLayout;
                 }
 
@@ -298,7 +298,7 @@ public class SecTab extends Fragment implements View.OnClickListener {
             }, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Toast.makeText(getContext(), "你点击了" + list.get(which).getDestkNo(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "你点击了" + list.get(which).getDeskNo(), Toast.LENGTH_SHORT).show();
                 }
             });
             listDialog.show();
