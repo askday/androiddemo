@@ -18,7 +18,7 @@ public class VolleyUtil {
         return ourInstance;
     }
 
-    private static final String baseUrl = "http://10.236.189.157:3005/";
+    private static final String baseUrl = "http://192.168.1.40:3005/";
     RequestQueue mQueue;
 
 
@@ -45,6 +45,7 @@ public class VolleyUtil {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 listener.onError(error);
+                                LogUtil.d(error.toString());
                             }
                         });
         mQueue.add(jsonObjectRequest);

@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.wx.demo.R;
+import com.wx.demo.adapter.DeskListAdapter;
 import com.wx.demo.model.DeskDetail;
 import com.wx.demo.model.DeskUser;
 import com.wx.demo.util.LogUtil;
@@ -202,6 +203,8 @@ public class SecTab extends Fragment implements View.OnClickListener {
         }
     }
 
+    /****************************牌桌列表********************************/
+
     private void requestDeskList() {
         try {
             JSONObject params = new JSONObject();
@@ -228,80 +231,16 @@ public class SecTab extends Fragment implements View.OnClickListener {
             }.getType();
             final List<DeskDetail> list = gson.fromJson((response.get("data")).toString(), listType);
 
-            AlertDialog.Builder listDialog =
+            AlertDialog.Builder dialog =
                     new AlertDialog.Builder(getContext());
-            listDialog.setTitle("所有牌桌");
-            listDialog.setAdapter(new ListAdapter() {
-                @Override
-                public boolean areAllItemsEnabled() {
-                    return false;
-                }
-
-                @Override
-                public boolean isEnabled(int position) {
-                    return false;
-                }
-
-                @Override
-                public void registerDataSetObserver(DataSetObserver observer) {
-
-                }
-
-                @Override
-                public void unregisterDataSetObserver(DataSetObserver observer) {
-
-                }
-
-                @Override
-                public int getCount() {
-                    return list.size();
-                }
-
-                @Override
-                public Object getItem(int position) {
-                    return list.get(position);
-                }
-
-                @Override
-                public long getItemId(int position) {
-                    return position;
-                }
-
-                @Override
-                public boolean hasStableIds() {
-                    return false;
-                }
-
-                @Override
-                public View getView(int position, View convertView, ViewGroup parent) {
-                    LayoutInflater inflater = LayoutInflater.from(getContext());
-                    RelativeLayout relativeLayout = (RelativeLayout) inflater.inflate(R.layout.layout_dest_list, null);
-                    TextView tv = (TextView) relativeLayout.findViewById(R.id.list_item_name);
-                    tv.setText(String.valueOf(list.get(position).getDeskNo()));
-                    return relativeLayout;
-                }
-
-                @Override
-                public int getItemViewType(int position) {
-                    return 1;
-                }
-
-                @Override
-                public int getViewTypeCount() {
-                    return 1;
-                }
-
-                @Override
-                public boolean isEmpty() {
-                    return false;
-                }
-            }, new DialogInterface.OnClickListener() {
+            dialog.setTitle("所有牌桌");
+            dialog.setAdapter(new DeskListAdapter(getContext(), list), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Toast.makeText(getContext(), "你点击了" + list.get(which).getDeskNo(), Toast.LENGTH_SHORT).show();
                 }
             });
-            listDialog.show();
+            dialog.show();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
