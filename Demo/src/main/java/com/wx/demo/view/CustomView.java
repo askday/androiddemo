@@ -7,12 +7,14 @@ import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.wx.demo.R;
 import com.wx.demo.model.GridItem;
+import com.wx.demo.util.LogUtil;
 
 import java.util.List;
 
@@ -114,6 +116,14 @@ public class CustomView extends ViewGroup {
                 canvas.drawRect(startX, 1, this.width - 2, this.width - 2, paint);
             }
         }
+    }
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        LogUtil.d("==========on Touch");
+        return super.onTouchEvent(event);
     }
 
     public void init(int index, int columCount) {
