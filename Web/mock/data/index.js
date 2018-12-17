@@ -6,12 +6,21 @@ function generateData(root, dept) {
     if (dept - 1 > 0) {
       generateData(children, dept - 1);
     }
-    const obj = {
-      name: '@cword(3,8)',
-      category: dept * i,
-      children,
+    if (children.length > 0) {
+      const obj = {
+        name: '@cword(3,8)',
+        category: dept * i,
+        children,
+      }
+      root.push(obj);
+    } else {
+      const obj = {
+        name: '@cword(3,8)',
+        category: dept * i,
+        children
+      }
+      root.push(obj);
     }
-    root.push(obj);
   }
 }
 
