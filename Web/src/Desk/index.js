@@ -38,7 +38,7 @@ export default class Desk extends Component {
     console.log('======_renderModal=======', this, this.state.showModal);
     return (
       <Modal
-        className="Modal"
+        className="modal"
         overlayClassName="Overlay"
         isOpen={this.state.showModal}
         contentLabel="Minimal Modal Example"
